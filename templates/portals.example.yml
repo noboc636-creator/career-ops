@@ -1243,6 +1243,7 @@ search_queries:
 #   homerun         <slug>.homerun.co or feed.homerun.co/<slug>  (branded careers domain → api: https://feed.homerun.co/<slug>)
 #   computrabajo    <country>.computrabajo.com/<search path>  (LatAm board; e.g. co.computrabajo.com/trabajo-de-sistemas)
 #   magneto         www.magneto365.com/co/<search path>       (Colombia board; e.g. /co/trabajos/buscar/tecnologia)
+#   reed            www.reed.co.uk/jobs/<search slug>        (UK board; e.g. /jobs/data-engineer-jobs-in-manchester; or provider: reed + reed.keywords)
 #   paylocity       recruiting.paylocity.com/Recruiting/Jobs/All/<board-guid>  (or api: field; a posting's
 #                   /Jobs/Details/<id> link carries no board id and is NOT claimed)
 #
@@ -1760,6 +1761,18 @@ search_queries:
 #   # No location option: the feed's own locationstring filter is unreliable
 #   # (measured: a city name did not narrow results) — use location_filter
 #   # (above) for precision, same recall-first approach VDAB uses.
+#   enabled: true
+#
+# - name: Reed — Software                # UK general job board (reed.co.uk)
+#   provider: reed
+#   reed:
+#     # keywords optional: falls back to config/profile.yml's target_roles
+#     # (primary[] + archetypes[].name) when omitted.
+#     keywords: ["software engineer", "backend developer"]  # explicit override
+#     location: london     # optional; omit for the whole UK
+#   max_pages: 10          # optional page cap per keyword (25 jobs/page, default 10, max 60)
+#   # Or skip the reed: block and point careers_url at a search you ran in a
+#   # browser, e.g. https://www.reed.co.uk/jobs/data-engineer-jobs-in-manchester
 #   enabled: true
 #
 # - name: MyCareersFuture — Software     # Singapore's national job bank (WSG)
@@ -3563,3 +3576,14 @@ job_boards:
     careers_url: https://www.magneto365.com/co/trabajos/buscar/tecnologia
     enabled: false
     notes: "Colombia. 'tecnologia' search; swap the last path segment for another search."
+
+  # ── UK general boards (Reed) ──
+  # Server-rendered search page, zero-auth, auto-detected from careers_url.
+  # Many listings are posted by recruitment agencies, so `company` is often
+  # the agency. Measured 2026-10-28 (25 rows on page 1, 13 of them paid
+  # training-course adverts, which the provider drops). Left `enabled: false`.
+
+  - name: Reed — Software Engineer London
+    careers_url: https://www.reed.co.uk/jobs/software-engineer-jobs-in-london
+    enabled: false
+    notes: "UK. Swap the slug for another search (/jobs/<keywords>-jobs[-in-<location>]), or use provider: reed + reed.keywords."
